@@ -8,10 +8,13 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using DevStore.Api.Models;
 using DevStore.Data.Contexts;
 using DevStore.Data.Repositories;
 using DevStore.Domain.Entities;
 using DevStore.Domain.Repositories;
+using DevStore.Domain.Services;
+using DevStore.Service.Services;
 
 namespace DevStore.Api.Controllers
 {
@@ -19,6 +22,8 @@ namespace DevStore.Api.Controllers
     public class ProductsController : ApiController
     {
         private IProductRepository _repository = new ProductRepository();
+
+        private IProductService _service = new ProductService();
 
         // GET: api/Products
         [Route("v1/public/products")]
@@ -126,17 +131,18 @@ namespace DevStore.Api.Controllers
         }
 
         // POST: api/Products
-        [ResponseType(typeof(Product))]
-        public IHttpActionResult PostProduct(Product product)
+        public HttpResponseMessage PostProduct([FromBody]ProductCreateViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
-            _repository.Create(product);
+            //_repository.Create(product);
 
-            return CreatedAtRoute("DefaultApi", new { id = product.Id }, product);
+            _service.CreateNewProduct(model.Name);
+
+            return Request.CreateResponse(HttpStatusCode.OK, "Produto criado com sucesso");
         }
 
         // DELETE: api/Products/5
