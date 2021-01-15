@@ -15,11 +15,13 @@ using DevStore.Domain.Repositories;
 
 namespace DevStore.Api.Controllers
 {
+    [RoutePrefix("api")]
     public class ProductsController : ApiController
     {
         private IProductRepository _repository = new ProductRepository();
 
         // GET: api/Products
+        [Route("v1/public/products")]
         public HttpResponseMessage GetProducts()
         {
             var response = new HttpResponseMessage();
@@ -37,7 +39,46 @@ namespace DevStore.Api.Controllers
             return response;
         }
 
+        // GET: api/Products
+        [Route("v1/public/products/{name}")]
+        public HttpResponseMessage GetProducts(string name)
+        {
+            var response = new HttpResponseMessage();
+
+            try
+            {
+                var result = _repository.Get().Where(x => x.Name.StartsWith(name)).ToList();
+                response = Request.CreateResponse(HttpStatusCode.OK, result);
+            }
+            catch
+            {
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, "Ops, não foi possível listar os produtos!");
+            }
+
+            return response;
+        }
+
+        // GET: api/Products
+        [Route("v1/public/products/{skip}/{take}")]
+        public HttpResponseMessage GetProducts(int skip=0, int take=25)
+        {
+            var response = new HttpResponseMessage();
+
+            try
+            {
+                var result = _repository.Get().OrderBy(x => x.Name).Skip(skip).Take(take).ToList();
+                response = Request.CreateResponse(HttpStatusCode.OK, result);
+            }
+            catch
+            {
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, "Ops, não foi possível listar os produtos!");
+            }
+
+            return response;
+        }
+
         // GET: api/Products/5
+        [Route("v1/public/products/{id}")]
         [ResponseType(typeof(Product))]
         public IHttpActionResult GetProduct(int id)
         {
