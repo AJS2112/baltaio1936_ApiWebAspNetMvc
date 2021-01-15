@@ -20,9 +20,21 @@ namespace DevStore.Api.Controllers
         private IProductRepository _repository = new ProductRepository();
 
         // GET: api/Products
-        public IQueryable<Product> GetProducts()
+        public HttpResponseMessage GetProducts()
         {
-            return _repository.Get().AsQueryable();
+            var response = new HttpResponseMessage();
+
+            try
+            {
+                var result = _repository.Get().ToList();
+                response = Request.CreateResponse(HttpStatusCode.OK, result);
+            }
+            catch 
+            {
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, "Ops, não foi possível listar os produtos!");
+            }
+
+            return response;
         }
 
         // GET: api/Products/5
