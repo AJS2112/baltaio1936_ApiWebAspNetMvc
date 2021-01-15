@@ -71,7 +71,7 @@ namespace DevStore.Api.Controllers
 
             try
             {
-                var result = _repository.Get().OrderBy(x => x.Name).Skip(skip).Take(take).ToList();
+                var result = _repository.Get(skip,take);
                 response = Request.CreateResponse(HttpStatusCode.OK, result);
             }
             catch

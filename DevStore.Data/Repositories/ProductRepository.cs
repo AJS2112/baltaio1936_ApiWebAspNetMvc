@@ -33,9 +33,9 @@ namespace DevStore.Data.Repositories
             _db.Dispose();
         }
 
-        public List<Product> Get()
+        public List<Product> Get(int skip = 0, int take = 25)
         {
-            return _db.Products.ToList();
+            return _db.Products.OrderBy(x => x.Name).Skip(skip).Take(take).ToList();
         }
 
         public Product Get(int id)
