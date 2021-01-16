@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using DevStore.Api.Models;
@@ -27,7 +28,7 @@ namespace DevStore.Api.Controllers
 
         // GET: api/Products
         [Route("v1/public/products")]
-        public HttpResponseMessage GetProducts()
+        public Task<HttpResponseMessage> GetProducts()
         {
             var response = new HttpResponseMessage();
 
@@ -41,7 +42,9 @@ namespace DevStore.Api.Controllers
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, "Ops, não foi possível listar os produtos!");
             }
 
-            return response;
+            var tsc = new TaskCompletionSource<HttpResponseMessage>();
+            tsc.SetResult(response);
+            return tsc.Task;
         }
 
         // GET: api/Products
