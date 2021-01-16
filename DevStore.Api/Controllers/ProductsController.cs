@@ -48,6 +48,37 @@ namespace DevStore.Api.Controllers
         }
 
         // GET: api/Products
+        [Route("v1/public/products/user")]
+        public Task<HttpResponseMessage> GetProductsByUser()
+        {
+            var response = new HttpResponseMessage();
+
+            try
+            {
+                var products = _repository.Get().ToList();
+                var productsUserLiked = _repository.Get().ToList();
+                var user = "Antonio";
+
+                var result = new DashboardResultViewModel
+                {
+                    User = user,
+                    Products=products,
+                    ProductsUserLiked=productsUserLiked
+                };
+
+                response = Request.CreateResponse(HttpStatusCode.OK, result);
+            }
+            catch
+            {
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, "Ops, não foi possível listar os produtos!");
+            }
+
+            var tsc = new TaskCompletionSource<HttpResponseMessage>();
+            tsc.SetResult(response);
+            return tsc.Task;
+        }
+
+        // GET: api/Products
         [Route("v1/public/products/{name}")]
         public HttpResponseMessage GetProducts(string name)
         {
